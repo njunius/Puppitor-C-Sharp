@@ -32,5 +32,13 @@ class Tester{
         ActionKeyMap<string> test = new ActionKeyMap<string>(keyMap);
         
         //Console.Write(test.PrintKeyMap());
+        
+        test.UpdatePossibleStates("projected energy", true);
+        
+        Console.Write(test);
+        
+        test.UpdateActualStates("projected energy", "actions", true);
+        
+        Console.Write(test);
     }
 }

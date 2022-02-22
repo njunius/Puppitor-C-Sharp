@@ -92,6 +92,54 @@ public class ActionKeyMap<InputT> {
         Console.Write(this);
     }
     
+    // USED FOR UPDATING BASED ON KEYBOARD INPUTS    
+    public void UpdatePossibleStates(string stateToUpdate, bool newValue){
+        
+        if(possibleActionStates.ContainsKey(stateToUpdate)){
+            possibleActionStates[stateToUpdate] = newValue;
+        }
+        
+        return;
+    }
+    
+    /* USED FOR UPDATING THE INTERPRETABLE STATE BASED ON WHICH ACTION IS DISPLAYED
+     updates a specified action or modifier to a new boolean value
+     UPDATING AN ACTION WILL SET ALL OTHER ACTIONS TO FALSE
+     UPDATING A MODIFIER WILL SET ALL OTHER MODIFIERS TO FALSE
+    
+     MODIFERS, ACTIONS, AND CADENCES ARE ASSUMED TO BE MUTUALLY EXCLUSIVE WHEN UPDATING
+    */
+    public void UpdateActualStates(string stateToUpdate, string classOfAction, bool newValue){
+        
+        Dictionary<string, bool> updatableStates = actualActionStates[classOfAction];
+        
+        if(updatableStates.ContainsKey(stateToUpdate)){
+            List<string> keys = new List<string>(updatableStates.Keys);
+            // go through each of the possible actions or modifiers
+            // and set all but the one being explicitly changed to false
+            // and use the given value (newValue) to update the value of the
+            // specified action/modifier
+            foreach(string state in keys){
+                
+                if(stateToUpdate.Equals(state)){
+                    updatableStates[state] = newValue;
+                    currentStates[classOfAction] = state;
+                }
+                else {
+                    updatableStates[state] = false;
+                }
+            }
+            
+            if(newValue == false){
+                // return to doing the default behavior
+                currentStates[classOfAction] = defaultStates[classOfAction];
+                updatableStates[defaultStates[classOfAction]] = true;
+            }
+        }
+        
+        return;
+    }
+    
     public override string ToString(){
         
         string result = "\n";
