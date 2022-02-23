@@ -1,9 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 class Tester{
     static void Main(){
-                
+        
+        string fileName = @"affect_rules\test_rules.json";
+        string jsonString = File.ReadAllText(fileName);
+        Console.WriteLine(jsonString);
+        
         Dictionary<string, List<string>> modifierDict = new Dictionary<string, List<string>>(){
             {"tempo up", new List<string>{"c"}},
             {"tempo down", new List<string>{"z"}}
@@ -20,14 +26,6 @@ class Tester{
             {"modifiers", modifierDict}
         
         };
-
-        /*foreach(KeyValuePair<string, Dictionary<string, List<string>>> kvp in keyMap){
-            Console.Write("Category = {0}\n", kvp.Key);
-            
-            foreach(KeyValuePair<string, List<string>> kvpInner in kvp.Value){
-                Console.Write("\t{0} = {1}\n", kvpInner.Key, kvpInner.Value[0]);
-            }
-        }*/
         
         ActionKeyMap<string> test = new ActionKeyMap<string>(keyMap);
         
