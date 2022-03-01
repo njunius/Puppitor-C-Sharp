@@ -1,0 +1,18 @@
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor Test\bin\Debug\net6.0\Puppitor Test.exe
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor Test\bin\Debug\net6.0\Puppitor Test.deps.json
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor Test\bin\Debug\net6.0\Puppitor Test.runtimeconfig.json
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor Test\bin\Debug\net6.0\Puppitor Test.dll
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor Test\bin\Debug\net6.0\Puppitor Test.pdb
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor Test\bin\Debug\net6.0\Puppitor.dll
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor Test\bin\Debug\net6.0\Puppitor.pdb
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor Test\obj\Debug\net6.0\Puppitor Test.csproj.AssemblyReference.cache
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor Test\obj\Debug\net6.0\Puppitor Test.GeneratedMSBuildEditorConfig.editorconfig
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor Test\obj\Debug\net6.0\Puppitor Test.AssemblyInfoInputs.cache
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor Test\obj\Debug\net6.0\Puppitor Test.AssemblyInfo.cs
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor Test\obj\Debug\net6.0\Puppitor Test.csproj.CoreCompileInputs.cache
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor Test\obj\Debug\net6.0\Puppitor Test.csproj.CopyComplete
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor Test\obj\Debug\net6.0\Puppitor Test.dll
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor Test\obj\Debug\net6.0\refint\Puppitor Test.dll
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor Test\obj\Debug\net6.0\Puppitor Test.pdb
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor Test\obj\Debug\net6.0\Puppitor Test.genruntimeconfig.cache
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor Test\obj\Debug\net6.0\ref\Puppitor Test.dll

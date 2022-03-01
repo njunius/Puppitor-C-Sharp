@@ -1,0 +1,12 @@
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor\bin\Debug\net6.0\Puppitor.deps.json
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor\bin\Debug\net6.0\Puppitor.dll
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor\bin\Debug\net6.0\Puppitor.pdb
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor\obj\Debug\net6.0\Puppitor.csproj.AssemblyReference.cache
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor\obj\Debug\net6.0\Puppitor.GeneratedMSBuildEditorConfig.editorconfig
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor\obj\Debug\net6.0\Puppitor.AssemblyInfoInputs.cache
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor\obj\Debug\net6.0\Puppitor.AssemblyInfo.cs
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor\obj\Debug\net6.0\Puppitor.csproj.CoreCompileInputs.cache
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor\obj\Debug\net6.0\Puppitor.dll
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor\obj\Debug\net6.0\refint\Puppitor.dll
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor\obj\Debug\net6.0\Puppitor.pdb
+A:\Documents\Grad School\Expressive Dialogue Interface System\Puppitor-C-Sharp\src\core\Puppitor\obj\Debug\net6.0\ref\Puppitor.dll
