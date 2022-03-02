@@ -10,6 +10,10 @@ Console.WriteLine(jsonString);
 
 Affecter affecterTest = new Affecter(jsonString);
 
+fileName = @"affect_rules\test_different_rules.json";
+jsonString = File.ReadAllText(fileName);
+Affecter differentAffecterTest = new Affecter(jsonString);
+
 //double testPoint = Convert.ToDouble(affecterTest.affectRules["joy"]["equilibrium_point"]);
 
 //Console.WriteLine("equilibrium point: {0}", testPoint);
