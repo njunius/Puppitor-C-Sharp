@@ -10,8 +10,9 @@
                 "tempo_up" : 1.1,
                 "tempo_down" : 0.9,
                 "neutral" : 1.0
-            },        
-        "adjacent_affects" : ["anger"]
+            },     
+        "adjacent_affects" : ["anger"],
+        "equilibrium_point" : 0.4
     },
     "anger" : {
         "actions" : {
@@ -25,7 +26,8 @@
             "tempo_down" : 0.9,
             "neutral" : 1.0
         },
-        "adjacent_affects" : ["joy"]
+        "adjacent_affects" : ["joy"],
+        "equilibrium_point" : 0.7
     },
     "sadness" : {
         "actions" : {
@@ -39,6 +41,7 @@
             "tempo_down" : 0.9,
             "neutral" : 1.0
         },
-        "adjacent_affects" : ["anger"]
+        "adjacent_affects" : ["anger"],
+        "equilibrium_point" : 0.1
     }
 }

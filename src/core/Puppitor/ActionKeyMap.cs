@@ -9,13 +9,13 @@ namespace Puppitor
     public class ActionKeyMap<InputT>
     {
 
-        Dictionary<string, Dictionary<string, List<InputT>>> classKeyMap;
+        public Dictionary<string, Dictionary<string, List<InputT>>> classKeyMap;
 
-        Dictionary<string, string> defaultStates;
-        Dictionary<string, string> currentStates;
+        public Dictionary<string, string> defaultStates;
+        public Dictionary<string, string> currentStates;
 
-        Dictionary<string, bool> possibleActionStates;
-        Dictionary<string, Dictionary<string, bool>> actualActionStates;
+        public Dictionary<string, bool> possibleActionStates;
+        public Dictionary<string, Dictionary<string, bool>> actualActionStates;
 
         public ActionKeyMap(Dictionary<string, Dictionary<string, List<InputT>>> keyMap, string defaultAction = "resting", string defaultModifier = "neutral")
         {

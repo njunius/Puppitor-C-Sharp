@@ -8,6 +8,14 @@ string fileName = @"affect_rules\test_rules.json";
 string jsonString = File.ReadAllText(fileName);
 Console.WriteLine(jsonString);
 
+Affecter affecterTest = new Affecter(jsonString);
+
+//double testPoint = Convert.ToDouble(affecterTest.affectRules["joy"]["equilibrium_point"]);
+
+//Console.WriteLine("equilibrium point: {0}", testPoint);
+
+//Console.WriteLine($"equilibrium point: {affectRules?.equilibriumPoint}");
+
 Dictionary<string, List<string>> modifierDict = new Dictionary<string, List<string>>(){
             {"tempo up", new List<string>{"c"}},
             {"tempo down", new List<string>{"z"}}
@@ -27,7 +35,6 @@ Dictionary<string, Dictionary<string, List<string>>> keyMap = new Dictionary<str
 
 ActionKeyMap<string> test = new ActionKeyMap<string>(keyMap);
 
-//Console.Write(test.PrintKeyMap());
 
 test.UpdatePossibleStates("projected energy", true);
 
