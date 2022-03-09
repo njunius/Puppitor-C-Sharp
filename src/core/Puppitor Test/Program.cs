@@ -9,16 +9,69 @@ string jsonString = File.ReadAllText(fileName);
 Console.WriteLine(jsonString);
 
 Affecter affecterTest = new Affecter(jsonString);
+Dictionary<string, double> affectVector = Affecter.MakeAffectVector(affecterTest.affectRules.Keys.ToList<string>(), affecterTest.affectRules);
+
+Console.WriteLine("\naffectVector");
+foreach (KeyValuePair<string, double> affect in affectVector)
+{
+    Console.WriteLine("{0}: {1}", affect.Key, affect.Value);
+}
+
+affecterTest.UpdateAffect(affectVector, "open_flow", "neutral");
+
+Console.WriteLine("\naffectVector updated");
+foreach (KeyValuePair<string, double> affect in affectVector)
+{
+    Console.WriteLine("{0}: {1}", affect.Key, affect.Value);
+}
+
+Console.WriteLine("\naffectVector Prevailing Affects");
+List<string> prevailingAffects = Affecter.GetPossibleAffects(affectVector);
+foreach(string affect in prevailingAffects)
+{
+    Console.WriteLine(affect);
+}
+
+Console.WriteLine("\naffectVector Current Affect");
+string currAffect = affecterTest.ChoosePrevailingAffect(prevailingAffects);
+Console.WriteLine(currAffect);
+Console.WriteLine("wrapper function result: {0}", affecterTest.GetPrevailingAffect(affectVector));
 
 fileName = @"affect_rules\test_different_rules.json";
 jsonString = File.ReadAllText(fileName);
 Affecter differentAffecterTest = new Affecter(jsonString);
 
-//double testPoint = Convert.ToDouble(affecterTest.affectRules["joy"]["equilibrium_point"]);
+foreach (KeyValuePair<string, AffectEntry> affect in differentAffecterTest.affectRules)
+{
+    Console.WriteLine("{0}: {1}", affect.Key, affect.Value.affectName);
+}
 
-//Console.WriteLine("equilibrium point: {0}", testPoint);
+Dictionary<string, double> differentAffectVector = Affecter.MakeAffectVector(differentAffecterTest.affectRules.Keys.ToList<string>(), differentAffecterTest.affectRules);
 
-//Console.WriteLine($"equilibrium point: {affectRules?.equilibriumPoint}");
+Console.WriteLine("\ndifferentAffectVector");
+foreach(KeyValuePair<string, double> affect in differentAffectVector)
+{
+    Console.WriteLine("{0}: {1}", affect.Key, affect.Value);
+}
+
+differentAffecterTest.UpdateAffect(differentAffectVector, "cross_arms", "casually");
+
+Console.WriteLine("\ndifferentAffectVector updated");
+foreach (KeyValuePair<string, double> affect in differentAffectVector)
+{
+    Console.WriteLine("{0}: {1}", affect.Key, affect.Value);
+}
+
+Console.WriteLine("\ndifferentAffectVector Prevailing Affects");
+List<string> diffPrevailingAffects = Affecter.GetPossibleAffects(differentAffectVector);
+foreach (string affect in diffPrevailingAffects)
+{
+    Console.WriteLine(affect);
+}
+
+Console.WriteLine("\ndifferentAffectVector Current Affect");
+currAffect = differentAffecterTest.ChoosePrevailingAffect(diffPrevailingAffects);
+Console.WriteLine(currAffect);
 
 Dictionary<string, List<string>> modifierDict = new Dictionary<string, List<string>>(){
             {"tempo up", new List<string>{"c"}},
