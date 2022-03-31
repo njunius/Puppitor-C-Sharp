@@ -158,7 +158,8 @@ namespace Puppitor
         // helper function to do arithmetic with affect values and clamp the results between the floor and ceiling values as specified in an Affecter
         private double UpdateAndClampValues(double affectValue, double affectUpdateValue, double floorValue, double ceilValue)
         {
-            return Math.Clamp(affectValue + affectUpdateValue, floorValue, ceilValue);
+            // using max and min for Math library version compatibility
+            return Math.Max(Math.Min(affectValue + affectUpdateValue, ceilValue), floorValue);
         }
 
         /*
