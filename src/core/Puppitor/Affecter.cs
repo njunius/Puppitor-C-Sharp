@@ -171,9 +171,10 @@ namespace Puppitor
          */
         public void UpdateAffect(Dictionary<string, double> affectVector, string currentAction, string currentModifier)
         {
-            foreach(KeyValuePair<string, double> affect in affectVector)
+            //foreach(KeyValuePair<string, double> affect in affectVector)
+            for(int i = 0; i < affectVector.Count; i++)
             {
-                //Console.WriteLine(affectRules[affect.Key].ToString());
+                KeyValuePair<string, double> affect = affectVector.ElementAt(i);
 
                 double currentActionUpdateValue = affectRules[affect.Key].actions[currentAction];
                 double currentModifierUpdateValue = affectRules[affect.Key].modifiers[currentModifier];
