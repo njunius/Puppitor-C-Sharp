@@ -109,6 +109,7 @@ namespace Puppitor
         {
             foreach(KeyValuePair<string, JSONNode> nodeEntry in affectRulesTemp)
             {
+                // make the new affect entry and setup containers
                 AffectEntry affectEntry;
                 affectEntry.affectName = nodeEntry.Key;
                 affectEntry.equilibriumPoint = Convert.ToDouble(nodeEntry.Value["equilibrium_point"]);
@@ -116,6 +117,7 @@ namespace Puppitor
                 affectEntry.actions = new Dictionary<string, double>();
                 affectEntry.modifiers = new Dictionary<string, double>();
 
+                // populate each container with their corresponding data from the JSON file stored in affectRulesTemp
                 foreach (JSONData entry in nodeEntry.Value["adjacent_affects"].AsArray)
                 {
                     affectEntry.adjacentAffects.Add(entry.Value);
@@ -167,11 +169,11 @@ namespace Puppitor
          * the floats correspond to the strength of the expressed affect
          * current_action corresponds to the standard action expressed by an ActionKeyMap instance in its actual_action_states
          * NOTE: clamps affect values between floorValue and ceilValue
-         * NOTE: while performing the equilibrium_action the affect values will move toward the equilibriumValue of the Affecter
+         * NOTE: while performing the equilibriumAction the affect values will move toward the equilibriumValue of the Affecter
          */
         public void UpdateAffect(Dictionary<string, double> affectVector, string currentAction, string currentModifier)
         {
-            //foreach(KeyValuePair<string, double> affect in affectVector)
+            // using a raw for loop here because the values within the affectVector can be changed
             for(int i = 0; i < affectVector.Count; i++)
             {
                 KeyValuePair<string, double> affect = affectVector.ElementAt(i);
@@ -183,6 +185,7 @@ namespace Puppitor
 
                 double valueToAdd = currentModifierUpdateValue * currentActionUpdateValue;
 
+                // while performing the resting action, move values towards the given equilibrium point
                 if (currentAction.Equals(equilibriumClassAction))
                 {
                     if(currentAffectValue > currentEquilibriumValue)
@@ -290,6 +293,12 @@ namespace Puppitor
 
         }
 
+        /*
+         * wrapper function around the GetPossibleAffects() to ChoosePrevailingAffect() pipeline to allow for easier, more fixed integration into other code
+         * NOTE: this function is not intended to supercede the useage of both GetPossibleAffects() and ChoosePrevailingAffect()
+         *  it is here for convenience and if the default behavior of immediately using the list created by GetPossibleAffects() in ChoosePrevailingAffect()
+         *  is the desired functionality
+         */
         public string GetPrevailingAffect(Dictionary<string, double> affectVector, double allowableError = 0.00000001)
         {
             List<string> possibleAffects = GetPossibleAffects(affectVector, allowableError);

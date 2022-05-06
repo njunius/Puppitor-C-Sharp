@@ -6,6 +6,20 @@ using System.Threading.Tasks;
 
 namespace Puppitor
 {
+    /*
+     * action_key_map contains the interface for storing keybindings and performing actions
+     * the dictionary is modeled on Ren'Py's keymap
+     * the class also wraps the flags for detecting if an action is being done
+     *
+     * the possible_action_states dict is used to keep track of all interpreted actions being done and is updated based on keys and buttons pressed
+     *
+     * the actual_action_states is broken into modifier states and actions
+     * only one action can be happening at a time
+     * only one modifier can be active at a time
+     * modifiers update independently from actions
+     * actions update independently from modifiers
+     *
+     */
     public class ActionKeyMap<InputT>
     {
 
@@ -19,11 +33,12 @@ namespace Puppitor
 
         public ActionKeyMap(Dictionary<string, Dictionary<string, List<InputT>>> keyMap, string defaultAction = "resting", string defaultModifier = "neutral")
         {
-
+            // this dictionary and values should not be modified ever and are generally for internal use only
             defaultStates = new Dictionary<string, string>();
             defaultStates.Add("actions", defaultAction);
             defaultStates.Add("modifiers", defaultModifier);
 
+            // this dictionary and values should only be modified internally and are used to access the current state of the actions being performed 
             currentStates = new Dictionary<string, string>();
             currentStates.Add("actions", defaultStates["actions"]);
             currentStates.Add("modifiers", defaultStates["modifiers"]);
@@ -116,12 +131,12 @@ namespace Puppitor
         }
 
         /* USED FOR UPDATING THE INTERPRETABLE STATE BASED ON WHICH ACTION IS DISPLAYED
-         updates a specified action or modifier to a new boolean value
-         UPDATING AN ACTION WILL SET ALL OTHER ACTIONS TO FALSE
-         UPDATING A MODIFIER WILL SET ALL OTHER MODIFIERS TO FALSE
+         * updates a specified action or modifier to a new boolean value
+         * UPDATING AN ACTION WILL SET ALL OTHER ACTIONS TO FALSE
+         * UPDATING A MODIFIER WILL SET ALL OTHER MODIFIERS TO FALSE
 
-         MODIFERS, ACTIONS, AND CADENCES ARE ASSUMED TO BE MUTUALLY EXCLUSIVE WHEN UPDATING
-        */
+         * MODIFERS AND ACTIONS ARE ASSUMED TO BE MUTUALLY EXCLUSIVE WHEN UPDATING
+         */
         public void UpdateActualStates(string stateToUpdate, string classOfAction, bool newValue)
         {
 
