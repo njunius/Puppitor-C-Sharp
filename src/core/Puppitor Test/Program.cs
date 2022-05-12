@@ -4,9 +4,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Puppitor;
 
-string fileName = @"affect_rules\test_rules.json";
+string fileName = @"affect_rules\test_passions_rules.json";
 string jsonString = File.ReadAllText(fileName);
-Console.WriteLine(jsonString);
 
 Affecter affecterTest = new Affecter(jsonString);
 Dictionary<string, double> affectVector = Affecter.MakeAffectVector(affecterTest.affectRules.Keys.ToList<string>(), affecterTest.affectRules);

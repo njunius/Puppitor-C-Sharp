@@ -19,7 +19,7 @@ namespace Puppitor
         public string affectName;
         public Dictionary<string, double> actions;
         public Dictionary<string, double> modifiers;
-        public List<string> adjacentAffects;
+        public Dictionary<string, int> adjacentAffects;
         public double equilibriumPoint;
 
         public override string ToString()
@@ -29,7 +29,7 @@ namespace Puppitor
             result += "\naffect: " + affectName;
 
             result += "\n\tactions";
-            foreach(KeyValuePair<string, double> kvp in actions)
+            foreach (KeyValuePair<string, double> kvp in actions)
             {
                 result += "\n\t\t" + kvp.Key + ": " + kvp.Value;
             }
@@ -41,9 +41,9 @@ namespace Puppitor
             }
 
             result += "\n\tadjacent affects";
-            foreach(string affect in adjacentAffects)
+            foreach (KeyValuePair<string, int> affect in adjacentAffects)
             {
-                result += "\n\t\t" + affect;
+                result += "\n\t\t" + affect.Key + ": " + affect.Value;
             }
 
             result += "\n\tequilibrium point: " + equilibriumPoint +"\n";
@@ -98,6 +98,12 @@ namespace Puppitor
                 }
             }
             randomInstance = new Random();
+
+            foreach (KeyValuePair<string, AffectEntry> affectEntry in affectRules)
+            {
+                Console.WriteLine(affectEntry.Value.ToString());
+            }
+            
         }
 
         /* 
@@ -107,35 +113,36 @@ namespace Puppitor
         */
         private void ConvertRules(JSONClass affectRulesTemp)
         {
-            foreach(KeyValuePair<string, JSONNode> nodeEntry in affectRulesTemp)
+            foreach (KeyValuePair<string, JSONNode> nodeEntry in affectRulesTemp)
             {
                 // make the new affect entry and setup containers
                 AffectEntry affectEntry;
                 affectEntry.affectName = nodeEntry.Key;
                 affectEntry.equilibriumPoint = Convert.ToDouble(nodeEntry.Value["equilibrium_point"]);
-                affectEntry.adjacentAffects = new List<string>();
+                affectEntry.adjacentAffects = new Dictionary<string, int>();
                 affectEntry.actions = new Dictionary<string, double>();
                 affectEntry.modifiers = new Dictionary<string, double>();
 
                 // populate each container with their corresponding data from the JSON file stored in affectRulesTemp
-                foreach (JSONData entry in nodeEntry.Value["adjacent_affects"].AsArray)
+                foreach (KeyValuePair<string, JSONNode> adjacencyEntry in nodeEntry.Value["adjacent_affects"].AsObject)
                 {
-                    affectEntry.adjacentAffects.Add(entry.Value);
-                    Console.WriteLine(affectEntry.adjacentAffects[affectEntry.adjacentAffects.Count - 1]);
+                    int tempIntValue = Convert.ToInt32(adjacencyEntry.Value);
+                    affectEntry.adjacentAffects.Add(adjacencyEntry.Key, tempIntValue);
+                    //Console.WriteLine("{0}: {1}",adjacencyEntry.Key, affectEntry.adjacentAffects[adjacencyEntry.Key]);
                 }
 
-                foreach(KeyValuePair<string, JSONNode> actionEntry in nodeEntry.Value["actions"].AsObject)
+                foreach (KeyValuePair<string, JSONNode> actionEntry in nodeEntry.Value["actions"].AsObject)
                 {
                     double tempDoubleVal = Convert.ToDouble(actionEntry.Value);
                     affectEntry.actions.Add(actionEntry.Key, tempDoubleVal);
-                    Console.WriteLine("{0}: {1}", actionEntry.Key, affectEntry.actions[actionEntry.Key]);
+                    //Console.WriteLine("{0}: {1}", actionEntry.Key, affectEntry.actions[actionEntry.Key]);
                 }
 
                 foreach (KeyValuePair<string, JSONNode> modEntry in nodeEntry.Value["modifiers"].AsObject)
                 {
                     double tempDoubleVal = Convert.ToDouble(modEntry.Value);
                     affectEntry.modifiers.Add(modEntry.Key, tempDoubleVal);
-                    Console.WriteLine("{0}: {1}", modEntry.Key, affectEntry.modifiers[modEntry.Key]);
+                    //Console.WriteLine("{0}: {1}", modEntry.Key, affectEntry.modifiers[modEntry.Key]);
                 }
 
                 affectRules.Add(nodeEntry.Key, affectEntry);
@@ -174,7 +181,7 @@ namespace Puppitor
         public void UpdateAffect(Dictionary<string, double> affectVector, string currentAction, string currentModifier)
         {
             // using a raw for loop here because the values within the affectVector can be changed
-            for(int i = 0; i < affectVector.Count; i++)
+            for (int i = 0; i < affectVector.Count; i++)
             {
                 KeyValuePair<string, double> affect = affectVector.ElementAt(i);
 
@@ -188,7 +195,7 @@ namespace Puppitor
                 // while performing the resting action, move values towards the given equilibrium point
                 if (currentAction.Equals(equilibriumClassAction))
                 {
-                    if(currentAffectValue > currentEquilibriumValue)
+                    if (currentAffectValue > currentEquilibriumValue)
                     {
                         affectVector[affect.Key] = UpdateAndClampValues(currentAffectValue, -1 * Math.Abs(valueToAdd), currentEquilibriumValue, ceilValue);
                     }
@@ -217,11 +224,11 @@ namespace Puppitor
         {
             List<string> prevailingAffects = new List<string>();
 
-            foreach(KeyValuePair<string, double> affectEntry in affectVector)
+            foreach (KeyValuePair<string, double> affectEntry in affectVector)
             {
                 double currentAffectValue = affectVector[affectEntry.Key];
 
-                if(prevailingAffects.Count < 1)
+                if( prevailingAffects.Count < 1)
                 {
                     prevailingAffects.Add(affectEntry.Key);
                 }
@@ -252,14 +259,14 @@ namespace Puppitor
          * possibleAffects can be generated using the GetPossibleAffects() function
          * the choice logic is as follows:
          *      pick the only available affect
-         *      if there is more than one and the current_affect is in the set of possible_affects pick it
-         *      if the current_affect is not in the set but there is at least one affect connected to the current affect, pick from that subset
+         *      if there is more than one and the currentAffect is in the set of possible affects pick it
+         *      if the currentAffect is not in the set but there is at least one affect connected to the current affect, pick from that subset, with weights if any are specified
          *      otherwise randomly pick from the disconnected set of possible affects
          */
-        public string ChoosePrevailingAffect(List<string> possibleAffects)
+        public string ChoosePrevailingAffect(List<string> possibleAffects, int randomFloor = 0, int randomCeil = 100)
         {
             List<string> connectedAffects = new List<string>();
-            if(possibleAffects.Count == 1)
+            if (possibleAffects.Count == 1)
             {
                 currentAffect = possibleAffects[0];
                 return currentAffect;
@@ -269,19 +276,37 @@ namespace Puppitor
                 return currentAffect;
             }
 
+            Dictionary<string, int> currAdjacencyWeights = affectRules[currentAffect].adjacentAffects;
+
             foreach(string affect in possibleAffects)
             {
-                if (affectRules[currentAffect].adjacentAffects.Contains(affect))
+                if (currAdjacencyWeights.ContainsKey(affect))
                 {
                     connectedAffects.Add(affect);
                 }
             }
 
-            if(connectedAffects.Count > 0)
+            
+            if (connectedAffects.Count > 0)
             {
-                int randomIndex = randomInstance.Next(connectedAffects.Count);
+                int randomNum = randomInstance.Next(randomFloor, randomCeil);
+                // weighted random choice of the connected affects to the current affect
+                // a weight of 0 is ignored
+                foreach (string affect in connectedAffects)
+                {
+                    int currAffectWeight = currAdjacencyWeights[affect];
+                    if (currAffectWeight > 0 && randomNum <= currAffectWeight)
+                    {
+                        currentAffect = affect;
+                        return currentAffect;
+                    }
+                    randomNum -= currAffectWeight;
+                }
 
-                currentAffect = connectedAffects[randomIndex];
+                // if all weights are 0, just pick randombly
+                randomNum = randomInstance.Next(connectedAffects.Count);
+
+                currentAffect = connectedAffects[randomNum];
                 return currentAffect;
             }
             else
