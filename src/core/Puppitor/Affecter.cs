@@ -263,7 +263,7 @@ namespace Puppitor
          *      if the currentAffect is not in the set but there is at least one affect connected to the current affect, pick from that subset, with weights if any are specified
          *      otherwise randomly pick from the disconnected set of possible affects
          */
-        public string ChoosePrevailingAffect(List<string> possibleAffects, int randomFloor = 0, int randomCeil = 100)
+        public string ChoosePrevailingAffect(List<string> possibleAffects, int randomFloor = 0, int randomCeil = 101)
         {
             List<string> connectedAffects = new List<string>();
             if (possibleAffects.Count == 1)
