@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SimpleJSON;
@@ -68,6 +67,9 @@ namespace Puppitor
         public string equilibriumClassAction;
         public string? currentAffect;
         private Random randomInstance;
+        private List<string> prevailingAffects;
+        private List<string> connectedAffects;
+        public List<string> affectList;
 
         public Affecter(string affectRulesJSON, double affectFloor = 0.0, double affectCeiling = 1.0, string equilibriumAction = "resting")
         {
@@ -103,7 +105,19 @@ namespace Puppitor
             {
                 Console.WriteLine(affectEntry.Value.ToString());
             }
-            
+
+            // list of affects to be updated to avoid using elementAt()
+            affectList = new List<string>();
+
+            foreach(KeyValuePair<string, AffectEntry> entry in affectRules)
+            {
+                affectList.Add(entry.Key);
+            }
+
+            // choice functions lists
+            prevailingAffects = new List<string>();
+            connectedAffects = new List<string>();
+
         }
 
         /* 
@@ -161,6 +175,14 @@ namespace Puppitor
 
             ConvertRules(affectRulesTemp);
 
+            // update the affect list with the new rule file domain
+            affectList.Clear();
+
+            foreach (KeyValuePair<string, AffectEntry> entry in affectRules)
+            {
+                affectList.Add(entry.Key);
+            }
+
             return;
         }
 
@@ -181,14 +203,14 @@ namespace Puppitor
         public void UpdateAffect(Dictionary<string, double> affectVector, string currentAction, string currentModifier)
         {
             // using a raw for loop here because the values within the affectVector can be changed
-            for (int i = 0; i < affectVector.Count; i++)
+            //for (int i = 0; i < affectVector.Count; i++)
+            foreach(string affectName in affectList)
             {
-                KeyValuePair<string, double> affect = affectVector.ElementAt(i);
 
-                double currentActionUpdateValue = affectRules[affect.Key].actions[currentAction];
-                double currentModifierUpdateValue = affectRules[affect.Key].modifiers[currentModifier];
-                double currentEquilibriumValue = affectRules[affect.Key].equilibriumPoint;
-                double currentAffectValue = affectVector[affect.Key];
+                double currentActionUpdateValue = affectRules[affectName].actions[currentAction];
+                double currentModifierUpdateValue = affectRules[affectName].modifiers[currentModifier];
+                double currentEquilibriumValue = affectRules[affectName].equilibriumPoint;
+                double currentAffectValue = affectVector[affectName];
 
                 double valueToAdd = currentModifierUpdateValue * currentActionUpdateValue;
 
@@ -197,11 +219,11 @@ namespace Puppitor
                 {
                     if (currentAffectValue > currentEquilibriumValue)
                     {
-                        affectVector[affect.Key] = UpdateAndClampValues(currentAffectValue, -1 * Math.Abs(valueToAdd), currentEquilibriumValue, ceilValue);
+                        affectVector[affectName] = UpdateAndClampValues(currentAffectValue, -1 * Math.Abs(valueToAdd), currentEquilibriumValue, ceilValue);
                     }
                     else if (currentAffectValue < currentEquilibriumValue)
                     {
-                        affectVector[affect.Key] = UpdateAndClampValues(currentAffectValue, Math.Abs(valueToAdd), floorValue, currentEquilibriumValue);
+                        affectVector[affectName] = UpdateAndClampValues(currentAffectValue, Math.Abs(valueToAdd), floorValue, currentEquilibriumValue);
                     }
                     else
                     {
@@ -210,7 +232,7 @@ namespace Puppitor
                 }
                 else
                 {
-                    affectVector[affect.Key] = UpdateAndClampValues(currentAffectValue, valueToAdd, floorValue, ceilValue);
+                    affectVector[affectName] = UpdateAndClampValues(currentAffectValue, valueToAdd, floorValue, ceilValue);
                 }
             }
             return;
@@ -220,9 +242,9 @@ namespace Puppitor
          * returns a list of the affects with the highest strength of expression in the given affectVector
          * allowableError is used for dealing with the approximate value of floats
          */
-        public static List<string> GetPossibleAffects(Dictionary<string, double> affectVector, double allowableError = 0.00000001)
+        public List<string> GetPossibleAffects(Dictionary<string, double> affectVector, double allowableError = 0.00000001)
         {
-            List<string> prevailingAffects = new List<string>();
+            prevailingAffects.Clear();
 
             foreach (KeyValuePair<string, double> affectEntry in affectVector)
             {
@@ -265,7 +287,7 @@ namespace Puppitor
          */
         public string ChoosePrevailingAffect(List<string> possibleAffects, int randomFloor = 0, int randomCeil = 101)
         {
-            List<string> connectedAffects = new List<string>();
+            connectedAffects.Clear();
             if (possibleAffects.Count == 1)
             {
                 currentAffect = possibleAffects[0];

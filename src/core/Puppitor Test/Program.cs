@@ -25,7 +25,7 @@ foreach (KeyValuePair<string, double> affect in affectVector)
 }
 
 Console.WriteLine("\naffectVector Prevailing Affects");
-List<string> prevailingAffects = Affecter.GetPossibleAffects(affectVector);
+List<string> prevailingAffects = affecterTest.GetPossibleAffects(affectVector);
 foreach(string affect in prevailingAffects)
 {
     Console.WriteLine(affect);
@@ -62,7 +62,7 @@ foreach (KeyValuePair<string, double> affect in differentAffectVector)
 }
 
 Console.WriteLine("\ndifferentAffectVector Prevailing Affects");
-List<string> diffPrevailingAffects = Affecter.GetPossibleAffects(differentAffectVector);
+List<string> diffPrevailingAffects = differentAffecterTest.GetPossibleAffects(differentAffectVector);
 foreach (string affect in diffPrevailingAffects)
 {
     Console.WriteLine(affect);

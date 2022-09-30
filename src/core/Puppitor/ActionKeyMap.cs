@@ -31,6 +31,8 @@ namespace Puppitor
         public Dictionary<string, bool> possibleActionStates;
         public Dictionary<string, Dictionary<string, bool>> actualActionStates;
 
+        private Dictionary<string, List<string>> updatableStates;
+
         public ActionKeyMap(Dictionary<string, Dictionary<string, List<InputT>>> keyMap, string defaultAction = "resting", string defaultModifier = "neutral")
         {
             // this dictionary and values should not be modified ever and are generally for internal use only
@@ -115,6 +117,10 @@ namespace Puppitor
             tempActualActionDict = null;
             tempActualModifierDict = null;
 
+            updatableStates = new Dictionary<string, List<string>>();
+            updatableStates.Add("actions", actualActionStates["actions"].Keys.ToList());
+            updatableStates.Add("modifiers", actualActionStates["modifiers"].Keys.ToList());
+
             Console.Write(this);
         }
 
@@ -140,26 +146,25 @@ namespace Puppitor
         public void UpdateActualStates(string stateToUpdate, string classOfAction, bool newValue)
         {
 
-            Dictionary<string, bool> updatableStates = actualActionStates[classOfAction];
+            List<string> states = updatableStates[classOfAction];
 
-            if (updatableStates.ContainsKey(stateToUpdate))
+            if (states.Contains(stateToUpdate))
             {
-                List<string> keys = new List<string>(updatableStates.Keys);
                 // go through each of the possible actions or modifiers
                 // and set all but the one being explicitly changed to false
                 // and use the given value (newValue) to update the value of the
                 // specified action/modifier
-                foreach (string state in keys)
+                foreach (string state in states)
                 {
 
                     if (stateToUpdate.Equals(state))
                     {
-                        updatableStates[state] = newValue;
+                        actualActionStates[classOfAction][state] = newValue;
                         currentStates[classOfAction] = state;
                     }
                     else
                     {
-                        updatableStates[state] = false;
+                        actualActionStates[classOfAction][state] = false;
                     }
                 }
 
@@ -167,7 +172,7 @@ namespace Puppitor
                 {
                     // return to doing the default behavior
                     currentStates[classOfAction] = defaultStates[classOfAction];
-                    updatableStates[defaultStates[classOfAction]] = true;
+                    actualActionStates[classOfAction][defaultStates[classOfAction]] = true;
                 }
             }
 
