@@ -67,9 +67,9 @@ namespace Puppitor
         public double ceilValue;
         public string equilibriumClassAction;
         public string? currentAffect;
-        private Random randomInstance;
-        private List<string> prevailingAffects;
-        private List<string> connectedAffects;
+        public Random randomInstance;
+        public List<string> prevailingAffects;
+        public List<string> connectedAffects;
         public List<string> affectList;
 
         public Affecter(string affectRulesJSON, double affectFloor = 0.0, double affectCeiling = 1.0, string equilibriumAction = "resting")
@@ -356,7 +356,7 @@ namespace Puppitor
             {
                 score += 1;
             }
-            else if (maxAffects.Count > 1 && maxAffects.Contains(goalEmotion))
+            else if (maxAffects.Count > 1 && maxAffects.Contains(goalEmotion) && affecter.currentAffect.CompareTo(goalEmotion) != 0)
             {
                 score -= 1;
             }
