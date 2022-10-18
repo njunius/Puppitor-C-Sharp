@@ -243,19 +243,19 @@ namespace Puppitor
          * returns a list of the affects with the highest strength of expression in the given affectVector
          * allowableError is used for dealing with the approximate value of floats
          */
-        public List<string> GetPossibleAffects(Dictionary<string, double> affectVector, double allowableError = 0.00000001)
+        public static List<string> GetPossibleAffects(Affecter affecter, Dictionary<string, double> affectVector, double allowableError = 0.00000001)
         {
-            prevailingAffects.Clear();
+            affecter.prevailingAffects.Clear();
 
             foreach (KeyValuePair<string, double> affectEntry in affectVector)
             {
                 if (affectEntry.Value == affectVector.Values.Max())
                 {
-                    prevailingAffects.Add(affectEntry.Key);
+                    affecter.prevailingAffects.Add(affectEntry.Key);
                 }
             }
 
-            return prevailingAffects;
+            return affecter.prevailingAffects;
         }
 
         /*
@@ -268,57 +268,57 @@ namespace Puppitor
          *      if the currentAffect is not in the set but there is at least one affect connected to the current affect, pick from that subset, with weights if any are specified
          *      otherwise randomly pick from the disconnected set of possible affects
          */
-        public string ChoosePrevailingAffect(List<string> possibleAffects, int randomFloor = 0, int randomCeil = 101)
+        public static string ChoosePrevailingAffect(Affecter affecter, List<string> possibleAffects, int randomFloor = 0, int randomCeil = 101)
         {
-            connectedAffects.Clear();
+            affecter.connectedAffects.Clear();
             if (possibleAffects.Count == 1)
             {
-                currentAffect = possibleAffects[0];
-                return currentAffect;
+                affecter.currentAffect = possibleAffects[0];
+                return affecter.currentAffect;
             }
-            if (possibleAffects.Contains(currentAffect))
+            if (possibleAffects.Contains(affecter.currentAffect))
             {
-                return currentAffect;
+                return affecter.currentAffect;
             }
 
-            Dictionary<string, int> currAdjacencyWeights = affectRules[currentAffect].adjacentAffects;
+            Dictionary<string, int> currAdjacencyWeights = affecter.affectRules[affecter.currentAffect].adjacentAffects;
 
             foreach(string affect in possibleAffects)
             {
                 if (currAdjacencyWeights.ContainsKey(affect))
                 {
-                    connectedAffects.Add(affect);
+                    affecter.connectedAffects.Add(affect);
                 }
             }
 
             
-            if (connectedAffects.Count > 0)
+            if (affecter.connectedAffects.Count > 0)
             {
-                int randomNum = randomInstance.Next(randomFloor, randomCeil);
+                int randomNum = affecter.randomInstance.Next(randomFloor, randomCeil);
                 // weighted random choice of the connected affects to the current affect
                 // a weight of 0 is ignored
-                foreach (string affect in connectedAffects)
+                foreach (string affect in affecter.connectedAffects)
                 {
                     int currAffectWeight = currAdjacencyWeights[affect];
                     if (currAffectWeight > 0 && randomNum <= currAffectWeight)
                     {
-                        currentAffect = affect;
-                        return currentAffect;
+                        affecter.currentAffect = affect;
+                        return affecter.currentAffect;
                     }
                     randomNum -= currAffectWeight;
                 }
 
                 // if all weights are 0, just pick randombly
-                randomNum = randomInstance.Next(connectedAffects.Count);
+                randomNum = affecter.randomInstance.Next(affecter.connectedAffects.Count);
 
-                currentAffect = connectedAffects[randomNum];
-                return currentAffect;
+                affecter.currentAffect = affecter.connectedAffects[randomNum];
+                return affecter.currentAffect;
             }
             else
             {
-                int randomIndex = randomInstance.Next(possibleAffects.Count);
-                currentAffect = possibleAffects[randomIndex];
-                return currentAffect;
+                int randomIndex = affecter.randomInstance.Next(possibleAffects.Count);
+                affecter.currentAffect = possibleAffects[randomIndex];
+                return affecter.currentAffect;
             }
 
         }
@@ -329,26 +329,26 @@ namespace Puppitor
          *  it is here for convenience and if the default behavior of immediately using the list created by GetPossibleAffects() in ChoosePrevailingAffect()
          *  is the desired functionality
          */
-        public string GetPrevailingAffect(Dictionary<string, double> affectVector, double allowableError = 0.00000001)
+        public static string GetPrevailingAffect(Affecter affecter, Dictionary<string, double> affectVector, double allowableError = 0.00000001)
         {
-            List<string> possibleAffects = GetPossibleAffects(affectVector, allowableError);
-            string prevailingAffect = ChoosePrevailingAffect(possibleAffects);
+            List<string> possibleAffects = GetPossibleAffects(affecter, affectVector, allowableError);
+            string prevailingAffect = ChoosePrevailingAffect(affecter, possibleAffects);
             return prevailingAffect;
         }
 
         // evaluates a given affectVector based on the difference in values between the goalEmotion and the highest valued affects
-        public double EvaluateAffectVector(Dictionary<string, double> affectVector, string goalEmotion)
+        public static double EvaluateAffectVector(Affecter affecter, Dictionary<string, double> affectVector, string goalEmotion)
         {
             double score = 0;
             double goalEmotionValue = affectVector[goalEmotion];
 
-            List<string> maxAffects = GetPossibleAffects(affectVector);
+            List<string> maxAffects = GetPossibleAffects(affecter, affectVector);
 
             foreach (KeyValuePair<string, double> affectEntry in affectVector)
             {
                 if (affectEntry.Value == affectVector.Values.Max())
                 {
-                    prevailingAffects.Add(affectEntry.Key);
+                    affecter.prevailingAffects.Add(affectEntry.Key);
                 }
             }
 

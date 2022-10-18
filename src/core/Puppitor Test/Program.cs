@@ -25,18 +25,18 @@ foreach (KeyValuePair<string, double> affect in affectVector)
 }
 
 Console.WriteLine("\naffectVector Prevailing Affects");
-List<string> prevailingAffects = affecterTest.GetPossibleAffects(affectVector);
+List<string> prevailingAffects = Affecter.GetPossibleAffects(affecterTest, affectVector);
 foreach(string affect in prevailingAffects)
 {
     Console.WriteLine(affect);
 }
 
 Console.WriteLine("\naffectVector Current Affect");
-string currAffect = affecterTest.ChoosePrevailingAffect(prevailingAffects);
+string currAffect = Affecter.ChoosePrevailingAffect(affecterTest, prevailingAffects);
 Console.WriteLine(currAffect);
-Console.WriteLine("wrapper function result: {0}", affecterTest.GetPrevailingAffect(affectVector));
+Console.WriteLine("wrapper function result: {0}", Affecter.GetPrevailingAffect(affecterTest, affectVector));
 
-Console.WriteLine("Affect Vector Evaluated Using joy: " + affecterTest.EvaluateAffectVector(affectVector, "joy"));
+Console.WriteLine("Affect Vector Evaluated Using joy: " + Affecter.EvaluateAffectVector(affecterTest, affectVector, "joy"));
 
 fileName = @"affect_rules\test_different_rules.json";
 jsonString = File.ReadAllText(fileName);
@@ -64,14 +64,14 @@ foreach (KeyValuePair<string, double> affect in differentAffectVector)
 }
 
 Console.WriteLine("\ndifferentAffectVector Prevailing Affects");
-List<string> diffPrevailingAffects = differentAffecterTest.GetPossibleAffects(differentAffectVector);
+List<string> diffPrevailingAffects = Affecter.GetPossibleAffects(differentAffecterTest, differentAffectVector);
 foreach (string affect in diffPrevailingAffects)
 {
     Console.WriteLine(affect);
 }
 
 Console.WriteLine("\ndifferentAffectVector Current Affect");
-currAffect = differentAffecterTest.ChoosePrevailingAffect(diffPrevailingAffects);
+currAffect = Affecter.ChoosePrevailingAffect(differentAffecterTest, diffPrevailingAffects);
 Console.WriteLine(currAffect);
 
 Dictionary<string, List<string>> modifierDict = new Dictionary<string, List<string>>(){
