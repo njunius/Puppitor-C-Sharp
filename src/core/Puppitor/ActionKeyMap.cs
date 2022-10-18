@@ -33,6 +33,8 @@ namespace Puppitor
 
         private Dictionary<string, List<string>> updatableStates;
 
+        public List<Tuple<string, string>> moves;
+
         public ActionKeyMap(Dictionary<string, Dictionary<string, List<InputT>>> keyMap, string defaultAction = "resting", string defaultModifier = "neutral")
         {
             // this dictionary and values should not be modified ever and are generally for internal use only
@@ -44,6 +46,8 @@ namespace Puppitor
             currentStates = new Dictionary<string, string>();
             currentStates.Add("actions", defaultStates["actions"]);
             currentStates.Add("modifiers", defaultStates["modifiers"]);
+
+            moves = new List<Tuple<string, string>>();
 
             // expected format of keyMap
             /*
@@ -121,6 +125,14 @@ namespace Puppitor
             updatableStates.Add("actions", actualActionStates["actions"].Keys.ToList());
             updatableStates.Add("modifiers", actualActionStates["modifiers"].Keys.ToList());
 
+            foreach(string action in actualActionStates["actions"].Keys)
+            {
+                foreach(string modifier in actualActionStates["modifiers"].Keys)
+                {
+                    moves.Add(new Tuple<string, string>(action, modifier));
+                }
+            }
+
             Console.Write(this);
         }
 
@@ -179,6 +191,19 @@ namespace Puppitor
             return;
         }
 
+        // makes a copy of moves to allow search algorithms like MCTS to easily store lists of available moves
+        public List<Tuple<string, string>> GetMoves()
+        {
+            List<Tuple<string, string>> moveList = new List<Tuple<string, string>>();
+
+            foreach(Tuple<string, string> move in moves)
+            {
+                moveList.Add(new Tuple<string, string>(move.Item1, move.Item2));
+            }
+
+            return moveList;
+        }
+
         public override string ToString()
         {
 
@@ -223,6 +248,13 @@ namespace Puppitor
                     result += "\t\t" + kvpInner.Key + " = " + kvpInner.Value + "\n";
 
                 }
+            }
+
+            result += "\nMoves:";
+
+            foreach(Tuple<string, string> move in moves)
+            {
+                result += "(" + move.Item1 + ", " + move.Item2 + ") ";
             }
 
             result += "\n";

@@ -36,6 +36,8 @@ string currAffect = affecterTest.ChoosePrevailingAffect(prevailingAffects);
 Console.WriteLine(currAffect);
 Console.WriteLine("wrapper function result: {0}", affecterTest.GetPrevailingAffect(affectVector));
 
+Console.WriteLine("Affect Vector Evaluated Using joy: " + affecterTest.EvaluateAffectVector(affectVector, "joy"));
+
 fileName = @"affect_rules\test_different_rules.json";
 jsonString = File.ReadAllText(fileName);
 Affecter differentAffecterTest = new Affecter(jsonString);
@@ -98,4 +100,15 @@ Console.Write(test);
 
 test.UpdateActualStates("projected energy", "actions", true);
 
-Console.Write(test);
+Console.WriteLine(test);
+
+Console.WriteLine("\nNow Testing GetMoves():");
+List<Tuple<string, string>> testGetMoves = test.GetMoves();
+
+foreach(Tuple<string, string> move in testGetMoves)
+{
+    Console.Write("(" + move.Item1 + ", " + move.Item2 + ") ");
+}
+Console.WriteLine();
+
+

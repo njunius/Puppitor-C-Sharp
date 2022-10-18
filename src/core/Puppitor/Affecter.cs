@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using SimpleJSON;
+using System.Linq;
 
 namespace Puppitor
 {
@@ -248,28 +249,10 @@ namespace Puppitor
 
             foreach (KeyValuePair<string, double> affectEntry in affectVector)
             {
-                double currentAffectValue = affectVector[affectEntry.Key];
-
-                if( prevailingAffects.Count < 1)
+                if (affectEntry.Value == affectVector.Values.Max())
                 {
                     prevailingAffects.Add(affectEntry.Key);
                 }
-                else
-                {
-                    double highestValueSeen = affectVector[prevailingAffects[0]];
-
-                    if (highestValueSeen < currentAffectValue)
-                    {
-                        prevailingAffects.Clear();
-                        prevailingAffects.Add(affectEntry.Key);
-                    }
-                    else if (Math.Abs(highestValueSeen - currentAffectValue) < allowableError)
-                    {
-                        prevailingAffects.Add(affectEntry.Key);
-                    }
-                }
-
-                
             }
 
             return prevailingAffects;
@@ -351,6 +334,44 @@ namespace Puppitor
             List<string> possibleAffects = GetPossibleAffects(affectVector, allowableError);
             string prevailingAffect = ChoosePrevailingAffect(possibleAffects);
             return prevailingAffect;
+        }
+
+        // evaluates a given affectVector based on the difference in values between the goalEmotion and the highest valued affects
+        public double EvaluateAffectVector(Dictionary<string, double> affectVector, string goalEmotion)
+        {
+            double score = 0;
+            double goalEmotionValue = affectVector[goalEmotion];
+
+            List<string> maxAffects = GetPossibleAffects(affectVector);
+
+            foreach (KeyValuePair<string, double> affectEntry in affectVector)
+            {
+                if (affectEntry.Value == affectVector.Values.Max())
+                {
+                    prevailingAffects.Add(affectEntry.Key);
+                }
+            }
+
+            if (maxAffects.Count == 1 && maxAffects.Contains(goalEmotion))
+            {
+                score += 1;
+            }
+            else if (maxAffects.Count > 1 && maxAffects.Contains(goalEmotion))
+            {
+                score -= 1;
+            }
+            else
+            {
+                foreach (KeyValuePair<string, double> affectEntry in affectVector)
+                {
+                    if (affectEntry.Key.CompareTo(goalEmotion) != 0)
+                    {
+                        score += goalEmotionValue - affectVector[affectEntry.Key];
+                    }
+                }
+            }
+
+            return score;
         }
 
         // provided function for formatting dictionaries for use with an Affecter
