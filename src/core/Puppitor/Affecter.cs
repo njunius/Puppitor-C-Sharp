@@ -352,7 +352,7 @@ namespace Puppitor
                 }
             }
 
-            if (maxAffects.Count == 1 && maxAffects.Contains(goalEmotion))
+            if (affecter.currentAffect.CompareTo(goalEmotion) == 0)
             {
                 score += 1;
             }
