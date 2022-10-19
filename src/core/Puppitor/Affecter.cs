@@ -116,7 +116,6 @@ namespace Puppitor
             }
 
             // choice functions lists
-            prevailingAffects = new List<string>();
             connectedAffects = new List<string>();
 
         }
@@ -241,21 +240,20 @@ namespace Puppitor
 
         /*
          * returns a list of the affects with the highest strength of expression in the given affectVector
-         * allowableError is used for dealing with the approximate value of floats
          */
-        public static List<string> GetPossibleAffects(Affecter affecter, Dictionary<string, double> affectVector, double allowableError = 0.00000001)
+        public static List<string> GetPossibleAffects(Dictionary<string, double> affectVector)
         {
-            affecter.prevailingAffects.Clear();
+            List<string> possibleAffects = new List<string>();
 
             foreach (KeyValuePair<string, double> affectEntry in affectVector)
             {
                 if (affectEntry.Value == affectVector.Values.Max())
                 {
-                    affecter.prevailingAffects.Add(affectEntry.Key);
+                    possibleAffects.Add(affectEntry.Key);
                 }
             }
 
-            return affecter.prevailingAffects;
+            return possibleAffects;
         }
 
         /*
@@ -329,34 +327,26 @@ namespace Puppitor
          *  it is here for convenience and if the default behavior of immediately using the list created by GetPossibleAffects() in ChoosePrevailingAffect()
          *  is the desired functionality
          */
-        public static string GetPrevailingAffect(Affecter affecter, Dictionary<string, double> affectVector, double allowableError = 0.00000001)
+        public static string GetPrevailingAffect(Affecter affecter, Dictionary<string, double> affectVector)
         {
-            List<string> possibleAffects = GetPossibleAffects(affecter, affectVector, allowableError);
+            List<string> possibleAffects = GetPossibleAffects(affectVector);
             string prevailingAffect = ChoosePrevailingAffect(affecter, possibleAffects);
             return prevailingAffect;
         }
 
         // evaluates a given affectVector based on the difference in values between the goalEmotion and the highest valued affects
-        public static double EvaluateAffectVector(Affecter affecter, Dictionary<string, double> affectVector, string goalEmotion)
+        public static double EvaluateAffectVector(string currentAffect, Dictionary<string, double> affectVector, string goalEmotion)
         {
             double score = 0;
             double goalEmotionValue = affectVector[goalEmotion];
 
-            List<string> maxAffects = GetPossibleAffects(affecter, affectVector);
+            List<string> maxAffects = GetPossibleAffects(affectVector);
 
-            foreach (KeyValuePair<string, double> affectEntry in affectVector)
-            {
-                if (affectEntry.Value == affectVector.Values.Max())
-                {
-                    affecter.prevailingAffects.Add(affectEntry.Key);
-                }
-            }
-
-            if (affecter.currentAffect.CompareTo(goalEmotion) == 0)
+            if (currentAffect.CompareTo(goalEmotion) == 0)
             {
                 score += 1;
             }
-            else if (maxAffects.Count > 1 && maxAffects.Contains(goalEmotion) && affecter.currentAffect.CompareTo(goalEmotion) != 0)
+            else if (maxAffects.Count > 1 && maxAffects.Contains(goalEmotion) && currentAffect.CompareTo(goalEmotion) != 0)
             {
                 score -= 1;
             }
