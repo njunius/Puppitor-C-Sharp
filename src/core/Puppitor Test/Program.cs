@@ -26,6 +26,22 @@ foreach (KeyValuePair<string, double> affect in affectVector)
 
 Console.WriteLine("\naffectVector Prevailing Affects");
 List<string> prevailingAffects = Affecter.GetPossibleAffects(affectVector);
+foreach (string affect in prevailingAffects)
+{
+    Console.WriteLine(affect);
+}
+
+// test the user multiplier and addition values
+affecterTest.UpdateAffect(affectVector, "open_flow", "neutral", 1.5, 0.2);
+
+Console.WriteLine("\naffectVector updated");
+foreach (KeyValuePair<string, double> affect in affectVector)
+{
+    Console.WriteLine("{0}: {1}", affect.Key, affect.Value);
+}
+
+Console.WriteLine("\naffectVector Prevailing Affects");
+prevailingAffects = Affecter.GetPossibleAffects(affectVector);
 foreach(string affect in prevailingAffects)
 {
     Console.WriteLine(affect);

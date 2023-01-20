@@ -200,7 +200,7 @@ namespace Puppitor
          * NOTE: clamps affect values between floorValue and ceilValue
          * NOTE: while performing the equilibriumAction the affect values will move toward the equilibriumValue of the Affecter
          */
-        public void UpdateAffect(Dictionary<string, double> affectVector, string currentAction, string currentModifier)
+        public void UpdateAffect(Dictionary<string, double> affectVector, string currentAction, string currentModifier, double valueMultiplier = 1.0, double valueAdd = 0.0)
         {
             // using a raw for loop here because the values within the affectVector can be changed
             //for (int i = 0; i < affectVector.Count; i++)
@@ -212,7 +212,7 @@ namespace Puppitor
                 double currentEquilibriumValue = affectRules[affectName].equilibriumPoint;
                 double currentAffectValue = affectVector[affectName];
 
-                double valueToAdd = currentModifierUpdateValue * currentActionUpdateValue;
+                double valueToAdd = valueMultiplier * (currentModifierUpdateValue * currentActionUpdateValue) + valueAdd;
 
                 // while performing the resting action, move values towards the given equilibrium point
                 if (currentAction.Equals(equilibriumClassAction))
