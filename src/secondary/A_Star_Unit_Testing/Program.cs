@@ -69,7 +69,7 @@ void PrintAffectVector (Dictionary<string, double> affectVector)
 
 bool verbose = false;
 
-string fileName = @"affect_rules\rika_affect_rules.json";
+string fileName = @"affect_rules\test_passions_rules.json";
 string jsonString = File.ReadAllText(fileName);
 
 Affecter affecterTest = new Affecter(jsonString);
