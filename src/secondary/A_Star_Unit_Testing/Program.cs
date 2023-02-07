@@ -12,17 +12,29 @@ Tuple<string, string> UpdateFromPath (List<Tuple<string, string>> path)
     return node;
 }
 
-void MaximizeMinimizeAV (Dictionary<string, double> affectVector, Affecter affecter){
+void MaximizeMinimizeAV (Dictionary<string, double> affectVector, Affecter affecter, bool zeroEven = true){
     int count = 0;
+    double even;
+    double odd;
+    if (zeroEven)
+    {
+        even = 0.0;
+        odd = 1.0;
+    }
+    else
+    {
+        even = 1.0;
+        odd = 0.0;
+    }
     foreach (string affectName in affectVector.Keys.ToList())
     {
         if (count % 2 == 0)
         {
-            affectVector[affectName] = 0.0;
+            affectVector[affectName] = even;
         }
         else
         {
-            affectVector[affectName] = 1.0;
+            affectVector[affectName] = odd;
         }
         count++;
     }
@@ -69,7 +81,7 @@ void PrintAffectVector (Dictionary<string, double> affectVector)
 
 bool verbose = false;
 
-string fileName = @"affect_rules\test_passions_rules.json";
+string fileName = @"affect_rules\chiara_affect_rules.json";
 string jsonString = File.ReadAllText(fileName);
 
 Affecter affecterTest = new Affecter(jsonString);
@@ -115,6 +127,8 @@ PrintAffectVector(affectVector);
 MaximizeMinimizeAV(affectVector, affecterTest);
 
 emotinalGoal = "sadness";
+action = "resting";
+modifier = "neutral";
 PrintRunInfo(stepValue, emotinalGoal, affectVector);
 
 actionPath.Clear();
@@ -128,8 +142,10 @@ PrintAffectVector(affectVector);
 
 MaximizeMinimizeAV(affectVector, affecterTest);
 
-emotinalGoal = "sadness";
-stepValue = 30;
+emotinalGoal = "joy";
+action = "resting";
+modifier = "neutral";
+stepValue = 90;
 PrintRunInfo(stepValue, emotinalGoal, affectVector);
 
 actionPath.Clear();
@@ -144,7 +160,60 @@ PrintAffectVector(affectVector);
 MaximizeMinimizeAV(affectVector, affecterTest);
 
 emotinalGoal = "fear";
-stepValue = 30;
+action = "resting";
+modifier = "neutral";
+stepValue = 90;
+PrintRunInfo(stepValue, emotinalGoal, affectVector);
+
+actionPath.Clear();
+startNode = new Tuple<Dictionary<string, double>, string, string, string>(affectVector, action, modifier, affecterTest.currentAffect);
+actionPath = AStarThink.A_Star_Think(affecterTest, testKeyMap, startNode, emotinalGoal, stepValue);
+
+ApplyPrintPath(actionPath, affecterTest, affectVector, verbose);
+
+Console.Write("final affectVector: ");
+PrintAffectVector(affectVector);
+
+MaximizeMinimizeAV(affectVector, affecterTest, false);
+
+emotinalGoal = "anger";
+action = "resting";
+modifier = "neutral";
+stepValue = 90;
+PrintRunInfo(stepValue, emotinalGoal, affectVector);
+
+actionPath.Clear();
+startNode = new Tuple<Dictionary<string, double>, string, string, string>(affectVector, action, modifier, affecterTest.currentAffect);
+actionPath = AStarThink.A_Star_Think(affecterTest, testKeyMap, startNode, emotinalGoal, stepValue);
+
+ApplyPrintPath(actionPath, affecterTest, affectVector, verbose);
+
+Console.Write("final affectVector: ");
+PrintAffectVector(affectVector);
+
+MaximizeMinimizeAV(affectVector, affecterTest, false);
+
+emotinalGoal = "love";
+action = "resting";
+modifier = "neutral";
+stepValue = 90;
+PrintRunInfo(stepValue, emotinalGoal, affectVector);
+
+actionPath.Clear();
+startNode = new Tuple<Dictionary<string, double>, string, string, string>(affectVector, action, modifier, affecterTest.currentAffect);
+actionPath = AStarThink.A_Star_Think(affecterTest, testKeyMap, startNode, emotinalGoal, stepValue);
+
+ApplyPrintPath(actionPath, affecterTest, affectVector, verbose);
+
+Console.Write("final affectVector: ");
+PrintAffectVector(affectVector);
+
+MaximizeMinimizeAV(affectVector, affecterTest, false);
+
+emotinalGoal = "worry";
+action = "resting";
+modifier = "neutral";
+stepValue = 90;
 PrintRunInfo(stepValue, emotinalGoal, affectVector);
 
 actionPath.Clear();

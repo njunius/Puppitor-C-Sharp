@@ -100,10 +100,19 @@ namespace AStarSearch
             {
                 Dictionary<string, double> nextState = new Dictionary<string, double>(nodeAffectVector); // make a new affectVector for the new node to add to the adjacency
 
+                List<string> maxValueAffect = Affecter.GetPossibleAffects(nextState);
+                double stepDistance = stepMultiplier;
+                double goalMaxDistance = CalcDistanceBetweenAffects(nextState, maxValueAffect[0], goalEmotion);
+
+                if (goalMaxDistance < stepMultiplier)
+                {
+                    stepDistance = goalMaxDistance;
+                }
+
                 characterAffecter.UpdateAffect(nextState, move.Item1, move.Item2, stepMultiplier);
 
                 Node node = new Node(nextState, move.Item1, move.Item2, Affecter.GetPrevailingAffect(characterAffecter, nextState));
-                double cost = PuppitorEdgeCost(characterAffecter, nextState, move.Item1, move.Item2, affects, goalEmotion, stepMultiplier); // calculate the edge cost of the new node
+                double cost = PuppitorEdgeCost(characterAffecter, nextState, move.Item1, move.Item2, affects, goalEmotion, stepDistance); // calculate the edge cost of the new node
 
                 Tuple<double, Node> costNode = new Tuple<double, Node>(cost, node); // package the cost and node tuple together
 
@@ -131,12 +140,22 @@ namespace AStarSearch
 
             List<string> maxValueNodes = Affecter.GetPossibleAffects(affectVector);
 
+            if (maxValueNodes.Contains(goalEmotion) && !currentAffect.Equals(goalEmotion))
+            {
+                heuristicValue = double.MaxValue;
+            }
+
             if (maxValueNodes.Count > 0)
             {
                 heuristicValue = affectVector[maxValueNodes[0]] - affectVector[goalEmotion]; // calculate the distance between the maximum value in the affectVector and the current value of goalEmotion
             }
 
             return heuristicValue;
+        }
+
+        public static double CalcDistanceBetweenAffects(Dictionary<string, double> affectVector, string firstAffect, string secondAffect)
+        {
+            return affectVector[firstAffect] - affectVector[secondAffect];
         }
     }
             
