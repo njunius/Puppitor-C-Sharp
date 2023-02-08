@@ -81,7 +81,7 @@ void PrintAffectVector (Dictionary<string, double> affectVector)
 
 bool verbose = false;
 
-string fileName = @"affect_rules\chiara_affect_rules.json";
+string fileName = @"affect_rules\test_passions_rules.json";
 string jsonString = File.ReadAllText(fileName);
 
 Affecter affecterTest = new Affecter(jsonString);
@@ -108,8 +108,9 @@ ActionKeyMap<string> testKeyMap = new ActionKeyMap<string>(keyMap);
 
 Console.WriteLine();
 
-string emotinalGoal = "anger";
 double stepValue = 90;
+
+string emotinalGoal = "anger";
 string action = "resting";
 string modifier = "neutral";
 
@@ -145,7 +146,7 @@ MaximizeMinimizeAV(affectVector, affecterTest);
 emotinalGoal = "joy";
 action = "resting";
 modifier = "neutral";
-stepValue = 90;
+//stepValue = 90;
 PrintRunInfo(stepValue, emotinalGoal, affectVector);
 
 actionPath.Clear();
@@ -162,7 +163,7 @@ MaximizeMinimizeAV(affectVector, affecterTest);
 emotinalGoal = "fear";
 action = "resting";
 modifier = "neutral";
-stepValue = 90;
+//stepValue = 90;
 PrintRunInfo(stepValue, emotinalGoal, affectVector);
 
 actionPath.Clear();
@@ -179,7 +180,7 @@ MaximizeMinimizeAV(affectVector, affecterTest, false);
 emotinalGoal = "anger";
 action = "resting";
 modifier = "neutral";
-stepValue = 90;
+//stepValue = 90;
 PrintRunInfo(stepValue, emotinalGoal, affectVector);
 
 actionPath.Clear();
@@ -196,7 +197,7 @@ MaximizeMinimizeAV(affectVector, affecterTest, false);
 emotinalGoal = "love";
 action = "resting";
 modifier = "neutral";
-stepValue = 90;
+//stepValue = 90;
 PrintRunInfo(stepValue, emotinalGoal, affectVector);
 
 actionPath.Clear();
@@ -213,7 +214,7 @@ MaximizeMinimizeAV(affectVector, affecterTest, false);
 emotinalGoal = "worry";
 action = "resting";
 modifier = "neutral";
-stepValue = 90;
+//stepValue = 90;
 PrintRunInfo(stepValue, emotinalGoal, affectVector);
 
 actionPath.Clear();
