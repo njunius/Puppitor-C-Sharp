@@ -1,52 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+#if NET5_0_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+using System.Text.Json;
+#endif
 using SimpleJSON;
-using System.Linq;
 
 namespace Puppitor
 {
 
     /*
-     * interior struct for use as part of parsing a Puppitor rule file into a useable format by C#
+     * interior class for use as part of parsing a Puppitor rule file into a useable format by C#
      * affectName should correspond to the key where the AffectEntry instance is stored
-     * adjacentAffects may be empty
-     * actions, modifiers, and equilibriumPoint are the primary elements that should be accessed by an Affecter
+     * adjacent_affects may be empty
+     * actions, modifiers, and equilibrium_point are the primary elements that should be accessed by an Affecter
+     * NOTE: AffectEntry uses snake_case for portability with JSON across languages, if you have a problem with that it's on you
      */
-    public struct AffectEntry
+    public class AffectEntry
     {
-        public string affectName;
-        public Dictionary<string, double> actions;
-        public Dictionary<string, double> modifiers;
-        public Dictionary<string, int> adjacentAffects;
-        public double equilibriumPoint;
+        //public string affectName { get; set; }
+        public Dictionary<string, double> actions { get; set; }
+        public Dictionary<string, double> modifiers { get; set; }
+        public Dictionary<string, int> adjacent_affects { get; set; }
+        public double equilibrium_point { get; set; }
 
         public override string ToString()
         {
             string result = "";
 
-            result += "\naffect: " + affectName;
+            //result += "\naffect: " + affectName;
 
-            result += "\n\tactions";
+            result += "\n\tactions:";
             foreach (KeyValuePair<string, double> kvp in actions)
             {
                 result += "\n\t\t" + kvp.Key + ": " + kvp.Value;
             }
 
-            result += "\n\tmodifiers";
+            result += "\n\tmodifiers:";
             foreach (KeyValuePair<string, double> kvp in modifiers)
             {
                 result += "\n\t\t" + kvp.Key + ": " + kvp.Value;
             }
 
-            result += "\n\tadjacent affects";
-            foreach (KeyValuePair<string, int> affect in adjacentAffects)
+            result += "\n\tadjacent affects:";
+            foreach (KeyValuePair<string, int> affect in adjacent_affects)
             {
                 result += "\n\t\t" + affect.Key + ": " + affect.Value;
             }
 
-            result += "\n\tequilibrium point: " + equilibriumPoint +"\n";
+            result += "\n\tequilibrium point: " + equilibrium_point +"\n";
 
             return result;
         }
@@ -75,13 +76,19 @@ namespace Puppitor
         public Affecter(string affectRulesJSON, double affectFloor = 0.0, double affectCeiling = 1.0, string equilibriumAction = "resting")
         {
 
-            JSONClass affectRulesTemp = JSON.Parse(affectRulesJSON).AsObject;
+            #if NET5_0_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+                Console.WriteLine(affectRulesJSON);
+                affectRules = JsonSerializer.Deserialize<Dictionary<string, AffectEntry>>(affectRulesJSON);
+            #else
+                Console.WriteLine("Falling Back to SimpleJSON");
+                JSONClass affectRulesTemp = JSON.Parse(affectRulesJSON).AsObject;
 
-            Console.WriteLine(affectRulesTemp.ToString());
+                Console.WriteLine(affectRulesTemp.ToString());
 
-            affectRules = new Dictionary<string, AffectEntry>();
+                affectRules = new Dictionary<string, AffectEntry>();
 
-            ConvertRules(affectRulesTemp);
+                ConvertRules(affectRulesTemp);
+            #endif
 
             floorValue = affectFloor;
             ceilValue = affectCeiling;
@@ -90,12 +97,12 @@ namespace Puppitor
 
             foreach (KeyValuePair<string, AffectEntry> kvp in affectRules)
             {
-                double entryEquilibrium = kvp.Value.equilibriumPoint;
+                double entryEquilibrium = kvp.Value.equilibrium_point;
                 if(currentAffect == null)
                 {
                     currentAffect = kvp.Key;
                 }
-                else if (entryEquilibrium > affectRules[currentAffect].equilibriumPoint)
+                else if (entryEquilibrium > affectRules[currentAffect].equilibrium_point)
                 {
                     currentAffect = kvp.Key;
                 }
@@ -130,10 +137,10 @@ namespace Puppitor
             foreach (KeyValuePair<string, JSONNode> nodeEntry in affectRulesTemp)
             {
                 // make the new affect entry and setup containers
-                AffectEntry affectEntry;
-                affectEntry.affectName = nodeEntry.Key;
-                affectEntry.equilibriumPoint = Convert.ToDouble(nodeEntry.Value["equilibrium_point"]);
-                affectEntry.adjacentAffects = new Dictionary<string, int>();
+                AffectEntry affectEntry = new AffectEntry();
+                //affectEntry.affectName = nodeEntry.Key;
+                affectEntry.equilibrium_point = Convert.ToDouble(nodeEntry.Value["equilibrium_point"]);
+                affectEntry.adjacent_affects = new Dictionary<string, int>();
                 affectEntry.actions = new Dictionary<string, double>();
                 affectEntry.modifiers = new Dictionary<string, double>();
 
@@ -141,7 +148,7 @@ namespace Puppitor
                 foreach (KeyValuePair<string, JSONNode> adjacencyEntry in nodeEntry.Value["adjacent_affects"].AsObject)
                 {
                     int tempIntValue = Convert.ToInt32(adjacencyEntry.Value);
-                    affectEntry.adjacentAffects.Add(adjacencyEntry.Key, tempIntValue);
+                    affectEntry.adjacent_affects.Add(adjacencyEntry.Key, tempIntValue);
                     //Console.WriteLine("{0}: {1}",adjacencyEntry.Key, affectEntry.adjacentAffects[adjacencyEntry.Key]);
                 }
 
@@ -169,11 +176,17 @@ namespace Puppitor
         // discards the stored affect_rules and replaces it with a new rule file
         public void LoadOpenRuleFile(string affectRuleFile)
         {
-            JSONClass affectRulesTemp = JSON.Parse(affectRuleFile).AsObject;
 
-            affectRules = new Dictionary<string, AffectEntry>();
+            #if NET5_0_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+                affectRules = JsonSerializer.Deserialize<Dictionary<string, AffectEntry>>(affectRuleFile);
+            #else
+                Console.WriteLine("Falling Back to SimpleJSON");
+                JSONClass affectRulesTemp = JSON.Parse(affectRuleFile).AsObject;
 
-            ConvertRules(affectRulesTemp);
+                affectRules = new Dictionary<string, AffectEntry>();
+
+                ConvertRules(affectRulesTemp);
+            #endif
 
             // update the affect list with the new rule file domain
             affectList.Clear();
@@ -209,7 +222,7 @@ namespace Puppitor
 
                 double currentActionUpdateValue = affectRules[affectName].actions[currentAction];
                 double currentModifierUpdateValue = affectRules[affectName].modifiers[currentModifier];
-                double currentEquilibriumValue = affectRules[affectName].equilibriumPoint;
+                double currentEquilibriumValue = affectRules[affectName].equilibrium_point;
                 double currentAffectValue = affectVector[affectName];
 
                 double valueToAdd = valueMultiplier * (currentModifierUpdateValue * currentActionUpdateValue) + valueAdd;
@@ -279,7 +292,7 @@ namespace Puppitor
                 return affecter.currentAffect;
             }
 
-            Dictionary<string, int> currAdjacencyWeights = affecter.affectRules[affecter.currentAffect].adjacentAffects;
+            Dictionary<string, int> currAdjacencyWeights = affecter.affectRules[affecter.currentAffect].adjacent_affects;
 
             foreach(string affect in possibleAffects)
             {
@@ -366,13 +379,14 @@ namespace Puppitor
 
         // provided function for formatting dictionaries for use with an Affecter
         // NOTE: it is recommended you make an Affecter instance THEN make the corresponding AffectVector to make sure the keys match
-        public static Dictionary<string, double> MakeAffectVector(List<string> affectNames, Dictionary<string, AffectEntry> equilibriumValues)
+        public static Dictionary<string, double> MakeAffectVector(Dictionary<string, AffectEntry> referenceAffecter)
         {
+            List<string> affectNames = referenceAffecter.Keys.ToList();
             Dictionary<string, double> affectVector = new Dictionary<string, double>();
 
             foreach(string affect in affectNames)
             {
-                affectVector.Add(affect, equilibriumValues[affect].equilibriumPoint);
+                affectVector.Add(affect, referenceAffecter[affect].equilibrium_point);
             }
 
             return affectVector;

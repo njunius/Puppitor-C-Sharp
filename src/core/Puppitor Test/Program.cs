@@ -8,7 +8,7 @@ string fileName = @"affect_rules\test_passions_rules.json";
 string jsonString = File.ReadAllText(fileName);
 
 Affecter affecterTest = new Affecter(jsonString);
-Dictionary<string, double> affectVector = Affecter.MakeAffectVector(affecterTest.affectRules.Keys.ToList<string>(), affecterTest.affectRules);
+Dictionary<string, double> affectVector = Affecter.MakeAffectVector(affecterTest.affectRules);
 
 Console.WriteLine("\naffectVector");
 foreach (KeyValuePair<string, double> affect in affectVector)
@@ -58,12 +58,7 @@ fileName = @"affect_rules\test_different_rules.json";
 jsonString = File.ReadAllText(fileName);
 Affecter differentAffecterTest = new Affecter(jsonString);
 
-foreach (KeyValuePair<string, AffectEntry> affect in differentAffecterTest.affectRules)
-{
-    Console.WriteLine("{0}: {1}", affect.Key, affect.Value.affectName);
-}
-
-Dictionary<string, double> differentAffectVector = Affecter.MakeAffectVector(differentAffecterTest.affectRules.Keys.ToList<string>(), differentAffecterTest.affectRules);
+Dictionary<string, double> differentAffectVector = Affecter.MakeAffectVector(differentAffecterTest.affectRules);
 
 Console.WriteLine("\ndifferentAffectVector");
 foreach(KeyValuePair<string, double> affect in differentAffectVector)
@@ -127,4 +122,18 @@ foreach(Tuple<string, string> move in testGetMoves)
 }
 Console.WriteLine();
 
+var options = new JsonSerializerOptions { WriteIndented = true };
+string fileString = JsonSerializer.Serialize(affecterTest.affectRules, options);
 
+Console.WriteLine(fileString);
+
+Console.WriteLine();
+
+fileName = @"affect_rules\test_passions_rules.json";
+jsonString = File.ReadAllText(fileName);
+differentAffecterTest.LoadOpenRuleFile(jsonString);
+
+foreach(KeyValuePair<string, AffectEntry> entry in differentAffecterTest.affectRules)
+{
+    Console.WriteLine("{0}:\n\t {1}", entry.Key, entry.Value);
+}
