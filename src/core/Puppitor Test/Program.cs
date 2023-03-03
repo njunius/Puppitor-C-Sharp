@@ -125,9 +125,7 @@ Console.WriteLine();
 var options = new JsonSerializerOptions { WriteIndented = true };
 string fileString = JsonSerializer.Serialize(affecterTest.affectRules, options);
 
-Console.WriteLine(fileString);
-
-Console.WriteLine();
+Console.WriteLine(fileString + "\n\n");
 
 fileName = @"affect_rules\test_passions_rules.json";
 jsonString = File.ReadAllText(fileName);
@@ -137,3 +135,6 @@ foreach(KeyValuePair<string, AffectEntry> entry in differentAffecterTest.affectR
 {
     Console.WriteLine("{0}:\n\t {1}", entry.Key, entry.Value);
 }
+
+Console.WriteLine("\nChangeDefaults\n");
+test.ChangeDefault("projected energy", "actions");

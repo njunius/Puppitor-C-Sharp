@@ -21,7 +21,7 @@ namespace Puppitor
     public class ActionKeyMap<InputT>
     {
 
-        public Dictionary<string, Dictionary<string, List<InputT>>> classKeyMap;
+        public Dictionary<string, Dictionary<string, List<InputT>>> keyMap;
 
         public Dictionary<string, string> defaultStates;
         public Dictionary<string, string> currentStates;
@@ -62,7 +62,7 @@ namespace Puppitor
             }
             */
 
-            classKeyMap = keyMap;
+            this.keyMap = keyMap;
 
             // flags corresponding to actions being specified by the user input
             // FOR INPUT DETECTION USE ONLY
@@ -79,12 +79,12 @@ namespace Puppitor
 
             possibleActionStates = new Dictionary<string, bool>();
 
-            foreach (string action in classKeyMap["actions"].Keys)
+            foreach (string action in keyMap["actions"].Keys)
             {
                 possibleActionStates.Add(action, false);
             }
 
-            foreach (string modifier in classKeyMap["modifiers"].Keys)
+            foreach (string modifier in keyMap["modifiers"].Keys)
             {
                 possibleActionStates.Add(modifier, false);
             }
@@ -100,14 +100,14 @@ namespace Puppitor
 
             Dictionary<string, bool> tempActualActionDict = new Dictionary<string, bool>();
             tempActualActionDict[defaultAction] = true;
-            foreach (string action in classKeyMap["actions"].Keys)
+            foreach (string action in keyMap["actions"].Keys)
             {
                 tempActualActionDict[action] = false;
             }
 
             Dictionary<string, bool> tempActualModifierDict = new Dictionary<string, bool>();
             tempActualModifierDict[defaultModifier] = true;
-            foreach (string modifier in classKeyMap["modifiers"].Keys)
+            foreach (string modifier in keyMap["modifiers"].Keys)
             {
                 tempActualModifierDict[modifier] = false;
             }
@@ -202,6 +202,42 @@ namespace Puppitor
             return moveList;
         }
 
+        // switches the default action or modifier to the specified new default
+        // newDefault must be an action or modifier in the existing set of actions and modifiers contained in ActionKeyMap
+        // classOfAction must be either "actions" or "modifiers"
+        public void ChangeDefault(string newDefault, string classOfAction)
+        {
+            if (!defaultStates.ContainsKey(classOfAction))
+            {
+                Console.WriteLine(classOfAction + " is not an \"action\" or \"modifier\"");
+                return;
+            }
+
+            if (!keyMap[classOfAction].ContainsKey(newDefault))
+            {
+                Console.WriteLine(newDefault + " is not in " + classOfAction);
+                return;
+            }
+
+            string oldDefault = defaultStates[classOfAction];
+            List<InputT> oldNonDefaultKeys = keyMap[classOfAction][newDefault];
+
+            Console.WriteLine("original default: " + oldDefault + ", newDefault original keys: ");
+
+            foreach(InputT key in oldNonDefaultKeys)
+            {
+                Console.WriteLine(key);
+            }
+
+            defaultStates[classOfAction] = newDefault;
+            keyMap[classOfAction].Remove(newDefault);
+            possibleActionStates.Remove(newDefault);
+            keyMap[classOfAction][oldDefault] = oldNonDefaultKeys;
+            possibleActionStates[oldDefault] = false;
+
+            Console.WriteLine("keyMap: " + this);
+        }
+
         public override string ToString()
         {
 
@@ -213,7 +249,7 @@ namespace Puppitor
 
             result += "\nKeyMap:\n";
 
-            foreach (KeyValuePair<string, Dictionary<string, List<InputT>>> kvp in classKeyMap)
+            foreach (KeyValuePair<string, Dictionary<string, List<InputT>>> kvp in keyMap)
             {
                 result += "\t" + kvp.Key + "\n";
 
@@ -260,5 +296,6 @@ namespace Puppitor
             return result;
 
         }
+
     }
 }
